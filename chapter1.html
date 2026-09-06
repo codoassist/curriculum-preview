@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1章 Claude Code予約ページ制作</title>
+<style>
+  :root {
+    --paper: #efece5;
+    --card: #f8f6f1;
+    --ink: #262420;
+    --ink-soft: #5c584f;
+    --line: #d9d4c8;
+    --accent: #4a5a8c;
+    --accent-soft: #e3e6f0;
+    --gold: #b8863d;
+    --gold-soft: #f3e8d2;
+    --good: #4c7a52;
+    --good-soft: #e2ecdf;
+    --code-bg: #232221;
+    --code-ink: #e9e5d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1d1c19; --card: #26241f; --ink: #eae6dc; --ink-soft: #aca790;
+      --line: #3a372f; --accent: #8a9bd6; --accent-soft: #2a2f45;
+      --gold: #d8ab5f; --gold-soft: #3a301c; --good: #86b58c; --good-soft: #23301f;
+      --code-bg: #100f0e; --code-ink: #e9e5d8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1d1c19; --card: #26241f; --ink: #eae6dc; --ink-soft: #aca790;
+    --line: #3a372f; --accent: #8a9bd6; --accent-soft: #2a2f45;
+    --gold: #d8ab5f; --gold-soft: #3a301c; --good: #86b58c; --good-soft: #23301f;
+    --code-bg: #100f0e; --code-ink: #e9e5d8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif;
+    line-height: 1.9; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
+  .progress-bar { position: sticky; top: 0; z-index: 10; background: var(--paper); padding: 16px 24px 14px; border-bottom: 1px solid var(--line); }
+  .progress-bar-inner { max-width: 760px; margin: 0 auto; }
+  .progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .progress-count { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .progress-track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+  header.hero { padding: 40px 0 28px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h1 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 600; margin: 0 0 14px; text-wrap: balance; }
+  .hero p { color: var(--ink-soft); font-size: 15px; max-width: 58ch; margin: 0; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .step-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px; cursor: pointer; user-select: none; }
+  .step-num { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; flex-shrink: 0; }
+  .step-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .step-day { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--ink-soft); flex-shrink: 0; }
+  .chevron { color: var(--ink-soft); transition: transform 0.2s ease; flex-shrink: 0; }
+  .step.open .chevron { transform: rotate(90deg); }
+  .step-body { display: none; padding: 0 22px 24px; font-size: 14.5px; color: var(--ink); }
+  .step.open .step-body { display: block; }
+  .step-body p { margin: 0 0 14px; }
+  .step-body strong { color: var(--ink); }
+  .prompt-box { background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 16px 18px; margin: 14px 0; position: relative; }
+  .prompt-box .prompt-label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #a9a294; display: block; margin-bottom: 8px; }
+  .prompt-box pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.7; padding-right: 70px; }
+  .copy-btn { position: absolute; top: 14px; right: 14px; font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: 1px solid #4a473f; background: #322f2a; color: var(--code-ink); cursor: pointer; }
+  .copy-btn:hover { background: #3d3a33; }
+  .copy-btn.copied { background: var(--good); border-color: var(--good); color: #fff; }
+  .point-box { background: var(--accent-soft); border-radius: 8px; padding: 14px 18px; margin-top: 4px; font-size: 13.5px; }
+  .point-box .label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .point-box ul { margin: 0; padding-left: 18px; }
+  .point-box li { margin-bottom: 4px; }
+  .complete-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .complete-btn { font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .complete-btn:hover { border-color: var(--accent); }
+  .step.done .complete-btn { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .step.done .step-num { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .faq { margin-top: 40px; }
+  .faq h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 19px; margin: 0 0 14px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
+  summary { font-weight: 600; font-size: 14px; cursor: pointer; }
+  details p { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .celebrate { margin-top: 40px; text-align: center; padding: 36px 24px; border-radius: 12px; background: var(--gold-soft); border: 1px solid var(--line); display: none; }
+  .celebrate.show { display: block; }
+  .celebrate .badge { font-size: 40px; margin-bottom: 10px; }
+  .celebrate h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 18px; margin: 0 0 8px; color: var(--gold); }
+  .celebrate p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
+  .next-btn { display: inline-block; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 999px; background: var(--gold); color: var(--card); text-decoration: none; }
+  @media (max-width: 560px) { .wrap { padding: 0 16px 80px; } .step-head { padding: 16px; } .prompt-box pre { padding-right: 0; } .copy-btn { position: static; margin-top: 10px; } }
+</style>
+
+</head>
+<body>
+<div class="progress-bar">
+  <div class="progress-bar-inner">
+    <div class="progress-top">
+      <span class="progress-label">1章 Claude Code予約ページ制作</span>
+      <span class="progress-count"><span id="doneCount">0</span> / 8</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">CODOASSIST — 1章</div>
+    <h1>Claude Codeで「予約ページ」を作る</h1>
+    <p>ここからは実際に手を動かします。コピペで進めるプロンプトを用意しているので、そのままClaude Codeに貼り付けてください。今日中に、パーソナルジム・エステサロン向けの予約ページのひな形が動くところまでいきます。</p>
+  </header>
+
+  <div id="steps">
+
+    <div class="step" data-id="1-1">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-1</span><span class="step-title">環境構築</span><span class="step-day">2日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>Claude Code（CLI）をパソコンにインストールします。最新のインストール手順は変わることがあるため、必ず公式ドキュメント（claude.com/claude-code）の手順に沿って進めてください。インストール後、ターミナルで <code>claude</code> と入力して起動できれば準備完了です。</p>
+        <p>つまずいたら、1人で悩まず講師・コミュニティに聞いてください。環境構築は技術力でなく「手順通りにやれるか」だけの問題です。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>公式ドキュメントの手順どおりに進める</li>
+            <li><code>claude</code>コマンドが起動すれば準備完了</li>
+            <li>詰まったら即相談する</li>
+          </ul>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-2">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-2</span><span class="step-title">業種別スターターの複製</span><span class="step-day">2日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>ターミナルでプロジェクト用のフォルダを作り、Claude Codeを起動したら、以下をそのまま貼り付けてください。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste</span>
+          <pre>パーソナルジム向けの予約ページのひな形を作ってください。
+セクションは、ヒーロー（キャッチコピー＋予約ボタン）、
+実績・お客様の声、料金メニュー、FAQ、アクセス・営業時間、
+予約ボタン（再掲）、の順にしてください。
+スマホで見やすいレイアウトにしてください。</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <p>Claude Codeが自動でファイルを作り、コードを書いてくれます。完了したら、ブラウザで実際に表示を確認してみましょう。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>日本語でそのまま指示すればよい</li>
+            <li>完成したらブラウザで見た目を確認する</li>
+          </ul>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-3">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-3</span><span class="step-title">1ページ構成の実装</span><span class="step-day">3〜5日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>ひな形ができたら、実際の店舗情報を差し込みます。案件がまだない場合は、架空のジム名で練習してかまいません。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste</span>
+          <pre>店名は「〇〇パーソナルジム」、キャッチコピーは
+「3ヶ月で理想の体へ、完全個室・完全予約制」にしてください。
+料金メニューは、体験60分：3,000円／月4回コース：29,800円
+にしてください。予約ボタンを押すと、LINEの友だち追加画面
+（仮リンク）に飛ぶようにしてください。</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <p>このように「店名・料金・導線」を1つずつ具体的に指示すると、Claude Codeはその通りに実装してくれます。曖昧な指示より、具体的な指示の方がうまくいきます。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>具体的な情報（店名・料金・導線）を1つずつ指示する</li>
+            <li>架空の店舗情報で練習してよい</li>
+          </ul>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-4">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-4</span><span class="step-title">予約導線の接続</span><span class="step-day">5日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>実際の案件では、LINE公式アカウント・外部予約システム（STORES予約・Coubic等）・電話番号・Googleマップへの接続が必要になります。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste</span>
+          <pre>予約ボタンを、STORES予約のページ（URLは後で差し替え）
+に飛ぶリンクにしてください。あわせて、電話番号をタップすると
+発信できるリンクと、Googleマップの埋め込みをアクセスの
+セクションに追加してください。</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>予約導線は複数箇所に置く（ヒーロー・下部）</li>
+            <li>電話・地図もあわせて接続する</li>
+          </ul>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-5">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-5</span><span class="step-title">計測タグの実装</span><span class="step-day">6日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>4章で作る「CVR最適化レポート」のために、今のうちに計測を仕込んでおきます。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste</span>
+          <pre>GA4（Googleアナリティクス4）のトラッキングコードを
+このページに追加してください。あわせて、予約ボタンが
+クリックされた時に「reserve_click」という名前のイベントが
+GA4に送られるようにしてください。</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>GA4の測定IDは案件ごとに差し替える</li>
+            <li>予約ボタンのクリックを個別に計測できるようにする</li>
+          </ul>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-6">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-6</span><span class="step-title">レスポンシブ確認</span><span class="step-day">6日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>お客様の多くはスマホで見ます。崩れがないか、Claude Codeに確認させましょう。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste</span>
+          <pre>375px（スマホ）、768px（タブレット）、1440px（PC）の
+それぞれの画面幅で、レイアウトが崩れていないか確認して
+ください。崩れている箇所があれば修正してください。</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-7">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-7</span><span class="step-title">公開前QA</span><span class="step-day">7日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>納品前の最終チェックです。人間の目でも必ず確認してください。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste</span>
+          <pre>公開前チェックをしてください。リンク切れ、誤字、
+個人情報や仮のテキストの残留がないか、SSL・OGP設定が
+されているかを確認し、問題があれば直してください。</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="1-8">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">1-8</span><span class="step-title">公開・ドメイン接続</span><span class="step-day">7日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>Vercel等のホスティングサービスに公開します。手順は公式ドキュメントを確認してください。既存ドメインがある場合は、サブドメイン（例：yoyaku.〇〇gym.com）として接続する方法もあります。</p>
+        <p><strong>ここまでで、あなたの手元に「動く予約ページ」という資産が1つ残りました。</strong>次の2章で、この作り方を実際の見込み客の診断・提案に使えるようにします。</p>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="faq">
+    <h2>よくある質問</h2>
+    <details><summary>プロンプトの通りにやってもエラーが出ます</summary><p>エラーメッセージをそのままコピーしてClaude Codeに貼り付け、「このエラーを直してください」と伝えてください。多くの場合、Claude Code自身がエラー内容を読んで修正してくれます。</p></details>
+    <details><summary>架空の店舗情報でずっと練習していいですか？</summary><p>1章の間は問題ありません。2章から、実際の見込み客の診断にこの作り方を使います。</p></details>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="badge">🎉</div>
+    <h3>1章、完了です！</h3>
+    <p>動く予約ページのひな形が作れるようになりました。次は、実際にどの店舗を診断すべきかを学ぶ2章です。</p>
+    <a class="next-btn" href="index.html">2章は準備中です。トップへ戻る →</a>
+  </div>
+</div>
+
+<script>
+  function toggleStep(el) {
+    document.querySelectorAll('.step').forEach(function (s) { if (s !== el) s.classList.remove('open'); });
+    el.classList.toggle('open');
+  }
+  function toggleDone(btn) {
+    var step = btn.closest('.step');
+    step.classList.toggle('done');
+    btn.textContent = step.classList.contains('done') ? '✓ 完了しました' : '✓ 完了にする';
+    saveProgress(); updateProgress();
+  }
+  function copyPrompt(btn) {
+    var text = btn.parentElement.querySelector('pre').innerText;
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = 'コピーしました';
+      btn.classList.add('copied');
+      setTimeout(function () { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 1800);
+    });
+  }
+  function updateProgress() {
+    var steps = document.querySelectorAll('.step');
+    var done = document.querySelectorAll('.step.done').length;
+    document.getElementById('doneCount').textContent = done;
+    document.getElementById('progressFill').style.width = (done / steps.length * 100) + '%';
+    document.getElementById('celebrate').classList.toggle('show', done === steps.length);
+  }
+  function saveProgress() {
+    var ids = [];
+    document.querySelectorAll('.step.done').forEach(function (s) { ids.push(s.dataset.id); });
+    try { localStorage.setItem('codoassist_ch1_progress', JSON.stringify(ids)); } catch (e) {}
+  }
+  function loadProgress() {
+    try {
+      var ids = JSON.parse(localStorage.getItem('codoassist_ch1_progress') || '[]');
+      ids.forEach(function (id) {
+        var step = document.querySelector('.step[data-id="' + id + '"]');
+        if (step) { step.classList.add('done'); step.querySelector('.complete-btn').textContent = '✓ 完了しました'; }
+      });
+    } catch (e) {}
+    updateProgress();
+  }
+  loadProgress();
+</script>
+</body>
+</html>

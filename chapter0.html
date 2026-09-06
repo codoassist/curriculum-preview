@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0章 オリエンテーション</title>
+<style>
+  :root {
+    --paper: #efece5;
+    --card: #f8f6f1;
+    --ink: #262420;
+    --ink-soft: #5c584f;
+    --line: #d9d4c8;
+    --accent: #4a5a8c;
+    --accent-soft: #e3e6f0;
+    --gold: #b8863d;
+    --gold-soft: #f3e8d2;
+    --good: #4c7a52;
+    --good-soft: #e2ecdf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1d1c19;
+      --card: #26241f;
+      --ink: #eae6dc;
+      --ink-soft: #aca790;
+      --line: #3a372f;
+      --accent: #8a9bd6;
+      --accent-soft: #2a2f45;
+      --gold: #d8ab5f;
+      --gold-soft: #3a301c;
+      --good: #86b58c;
+      --good-soft: #23301f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1d1c19;
+    --card: #26241f;
+    --ink: #eae6dc;
+    --ink-soft: #aca790;
+    --line: #3a372f;
+    --accent: #8a9bd6;
+    --accent-soft: #2a2f45;
+    --gold: #d8ab5f;
+    --gold-soft: #3a301c;
+    --good: #86b58c;
+    --good-soft: #23301f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
+
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--paper);
+    padding: 16px 24px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .progress-bar-inner { max-width: 760px; margin: 0 auto; }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .progress-label {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+  .progress-count {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  header.hero {
+    padding: 40px 0 28px;
+  }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif;
+    font-size: clamp(26px, 4vw, 34px);
+    font-weight: 600;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .hero p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 58ch;
+    margin: 0;
+  }
+
+  .step {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .step-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .step-num {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 10px;
+    flex-shrink: 0;
+  }
+  .step-title {
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+  }
+  .step-day {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+  .chevron {
+    color: var(--ink-soft);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .step.open .chevron { transform: rotate(90deg); }
+  .step-body {
+    display: none;
+    padding: 0 22px 24px;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .step.open .step-body { display: block; }
+  .step-body p { margin: 0 0 14px; }
+  .step-body strong { color: var(--ink); }
+
+  .point-box {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 4px;
+    font-size: 13.5px;
+  }
+  .point-box .label {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .point-box ul { margin: 0; padding-left: 18px; }
+  .point-box li { margin-bottom: 4px; }
+
+  .complete-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .complete-btn {
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .complete-btn:hover { border-color: var(--accent); }
+  .step.done .complete-btn {
+    background: var(--good-soft);
+    border-color: var(--good);
+    color: var(--good);
+  }
+  .step.done .step-num {
+    background: var(--good-soft);
+    border-color: var(--good);
+    color: var(--good);
+  }
+
+  .faq {
+    margin-top: 40px;
+  }
+  .faq h2 {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif;
+    font-size: 19px;
+    margin: 0 0 14px;
+  }
+  details {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+  }
+  summary {
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  details p {
+    margin: 10px 0 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+
+  .celebrate {
+    margin-top: 40px;
+    text-align: center;
+    padding: 36px 24px;
+    border-radius: 12px;
+    background: var(--gold-soft);
+    border: 1px solid var(--line);
+    display: none;
+  }
+  .celebrate.show { display: block; }
+  .celebrate .badge { font-size: 40px; margin-bottom: 10px; }
+  .celebrate h3 {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif;
+    font-size: 18px;
+    margin: 0 0 8px;
+    color: var(--gold);
+  }
+  .celebrate p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
+  .next-btn {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--card);
+    text-decoration: none;
+  }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px 80px; }
+    .step-head { padding: 16px; }
+  }
+</style>
+
+</head>
+<body>
+<div class="progress-bar">
+  <div class="progress-bar-inner">
+    <div class="progress-top">
+      <span class="progress-label">0章 オリエンテーション</span>
+      <span class="progress-count"><span id="doneCount">0</span> / 7</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">CODOASSIST — 0章</div>
+    <h1>オリエンテーション：顧客理解と成果逆算</h1>
+    <p>Claude Codeを使い、店舗（パーソナルジム・エステサロン等）の予約導線を診断・改善・計測できる人材になるための、最初の考え方の土台です。全7レッスン、1つずつ読み終えたら「完了」を押して進めてください。</p>
+  </header>
+
+  <div id="steps">
+
+    <div class="step" data-id="0-1">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-1</span>
+        <span class="step-title">Claude Codeとは何か</span>
+        <span class="step-day">1日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>Claude Codeは、Anthropic社が提供するAIアシスタントです。専門的なプログラミング知識がなくても、日本語で「こういうページを作りたい」「ここを直したい」と指示するだけで、実際に動くWebページやツールを作ってくれます。</p>
+        <p>このカリキュラムでは、Claude Codeを「難しいツール」としてではなく、<strong>「あなたの手足を動かしてくれる、超優秀な作業担当者」</strong>として捉えます。あなたの役割はコードを書くことではなく、「お客様が本当に困っていることは何か」を見抜き、Claude Codeに的確な指示を出すことです。</p>
+        <p>このレッスンは説明だけで終わらせません。実際にClaude Codeを開いて、「自己紹介ページを作って」と日本語で打ち込むだけを体験してもらいます。コピペで進めるプロンプトは1章で用意します。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>Claude Codeは「指示すれば作ってくれる」アシスタント</li>
+            <li>自分がエンジニアになる必要はない</li>
+            <li>1章で実際に手を動かして体験する</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="0-2">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-2</span>
+        <span class="step-title">なぜ「作業代行」でなく「成果」を売るのか</span>
+        <span class="step-day">1日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>「ホームページを作ります」という商売は、これからますます厳しくなります。AIを使えば誰でも安く速くホームページが作れる時代になったからです。実際、初期費用0円・月額2,500円でホームページを自動生成するサービスも登場し、既存のホームページ制作会社の受注を奪い始めています。</p>
+        <p>このカリキュラムが教えるのは「ホームページを作る技術」ではありません。<strong>「なぜお客様の予約が増えないのかを診断し、その原因を解決する」という成果</strong>です。ホームページは、その成果を実現するための手段の一つに過ぎません。</p>
+        <p>「作ります」ではなく「予約を増やします、その手段としてページも直します」——この一言の違いが、価格競争に巻き込まれるかどうかを分けます。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>作業代行（制作）はAIで価格が下がり続ける</li>
+            <li>成果（予約が増える）には価格競争が起きにくい</li>
+            <li>「作ります」でなく「増やします」で語る</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="0-3">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-3</span>
+        <span class="step-title">業種を1つ選ぶ（パーソナルジム・エステサロン）</span>
+        <span class="step-day">2日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>何でも屋にならないことが重要です。業種を1つに絞ることで、その業種特有の「よくある課題」「よくある離脱パターン」に詳しくなれます。詳しいということ自体が、お客様にとって「この人は分かってくれている」という安心材料になり、価格でなく信頼で選ばれる理由になります。</p>
+        <p>このカリキュラムでは、まず<strong>パーソナルジム・エステサロン</strong>を対象業種とします。来店予約という分かりやすいゴールがあり、Instagram運用との相性が良く、客単価も比較的高いためです。慣れてきたら、整体院・美容室・学習塾など、隣接する業種へ横展開していきます。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>業種を1つに絞ることが「優劣を語れる」武器になる</li>
+            <li>最初の対象：パーソナルジム・エステサロン</li>
+            <li>横展開は実績ができてから</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="0-4">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-4</span>
+        <span class="step-title">売上の要素分解</span>
+        <span class="step-day">2〜3日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>「売上が悪い」という曖昧な状態のままでは、何を直せばいいのか分かりません。売上は、次のように分解できます。</p>
+        <p style="font-size:16px; font-weight:600; text-align:center; padding:10px 0;">売上 ＝ 新規客数 × 成約率 × 客単価 × 来店頻度 × 継続期間</p>
+        <p>このカリキュラムで扱う「予約導線改善」は、主に<strong>新規客数</strong>と<strong>成約率</strong>の部分に効きます。Instagramを見た人が、迷わず予約・問い合わせまでたどり着けるようにすることで、せっかく集まっている見込み客を取りこぼさないようにするのが仕事です。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>売上を5つの要素に分解して考える</li>
+            <li>自分たちが直接効かせられるのは「新規客数」と「成約率」</li>
+            <li>お客様との会話でもこの分解を使って課題を特定する</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="0-5">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-5</span>
+        <span class="step-title">Claude Codeの月額費用の目安</span>
+        <span class="step-day">3日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>不安に思う方が多いので、先に費用の話をしておきます。</p>
+        <p>Claude Codeは、<strong>Claude Proプラン（月額20ドル、日本円でおよそ3,000円前後）</strong>に含まれています。このカリキュラムを進める上では、このプランで十分です。</p>
+        <p>継続契約を1社（月額16,500円）獲得できれば、ツールの費用は簡単にペイします。最初の数ヶ月は先行投資と考えてください。将来的に使用量が増えてきたら、より上位のプラン（月100〜200ドル程度）への切り替えを検討すれば十分です。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>開始に必要なのはClaude Pro（月$20＝目安¥3,000）のみ</li>
+            <li>継続契約1社でツール費用は回収できる</li>
+            <li>上位プランは必要になってから検討すればよい</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="0-6">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-6</span>
+        <span class="step-title">いつ案件が取れるのか・全体ロードマップ</span>
+        <span class="step-day">3日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>これはあくまで仮説であり、実際のデータで今後検証していく数字ですが、目安として持っておいてください。</p>
+        <p>1〜2ヶ月目は基礎（Claude Codeの操作・診断力・営業の型）を学ぶ期間で、まだ受注はありません。2〜3ヶ月目に営業を開始し、<strong>最短でも10〜14週目（約2.5〜3.5ヶ月目）に初回の受注</strong>を目指します。3〜5ヶ月目に継続契約1〜3社、4〜8ヶ月目に継続契約3〜6社（月5〜10万円）に到達する、というのが現時点でのロードマップです。</p>
+        <p>焦らず、まずは基礎を固めることを優先してください。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>初回受注の目安は開始から約2.5〜3.5ヶ月目</li>
+            <li>月5〜10万円の到達は4〜8ヶ月目が目安</li>
+            <li>すべて仮説であり、実データで今後調整される数字</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="0-7">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">0-7</span>
+        <span class="step-title">学習の進め方・挫折しやすいポイント</span>
+        <span class="step-day">3日目</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>このカリキュラムで最も挫折しやすいのは、「案件が取れない＝自分のスキルが足りない」と思い込んでしまうことです。実際には、案件が取れるかどうかはスキルの高さでなく、<strong>営業の行動量とマーケットの理解</strong>で決まります。</p>
+        <p>1章〜2章で技術と診断力の基礎を固めたら、3章の営業は「量をこなす」ことを最優先にしてください。1件・2件のリードで一喜一憂せず、月200件のDMという基準値から逆算して行動しましょう。分からないことがあれば、抱え込まずに講師・コミュニティに相談してください。</p>
+        <div class="point-box">
+          <span class="label">Point</span>
+          <ul>
+            <li>案件獲得はスキルでなく行動量で決まる</li>
+            <li>1・2件の結果で一喜一憂しない</li>
+            <li>一人で抱え込まず、相談する</li>
+          </ul>
+        </div>
+        <div class="complete-row">
+          <button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="faq">
+    <h2>よくある質問</h2>
+    <details>
+      <summary>本当にコーディング未経験でもできますか？</summary>
+      <p>できます。Claude Codeは日本語の指示で動くため、コードを書く必要はありません。1章で実際に手を動かしながら操作を覚えます。</p>
+    </details>
+    <details>
+      <summary>Claude Codeの費用以外にお金はかかりますか？</summary>
+      <p>基本はClaude Pro（月$20）のみです。案件が増えてきたら、外部予約システムやドメイン代など小さな実費が発生する場合がありますが、いずれも継続契約の収益で十分まかなえます。</p>
+    </details>
+    <details>
+      <summary>本当に2〜3ヶ月で案件が取れますか？</summary>
+      <p>これは実データ検証前の仮説です。基礎をしっかり固め、3章の営業を行動量どおりにこなした場合の目安として捉えてください。個人差があります。</p>
+    </details>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="badge">🎉</div>
+    <h3>0章、完了です！</h3>
+    <p>顧客理解と成果逆算の土台ができました。次は実際にClaude Codeを操作する1章です。</p>
+    <a class="next-btn" href="chapter1.html">1章へ進む →</a>
+  </div>
+</div>
+
+<script>
+  function toggleStep(el) {
+    document.querySelectorAll('.step').forEach(function (s) {
+      if (s !== el) s.classList.remove('open');
+    });
+    el.classList.toggle('open');
+  }
+  function toggleDone(btn) {
+    var step = btn.closest('.step');
+    step.classList.toggle('done');
+    btn.textContent = step.classList.contains('done') ? '✓ 完了しました' : '✓ 完了にする';
+    saveProgress();
+    updateProgress();
+  }
+  function updateProgress() {
+    var steps = document.querySelectorAll('.step');
+    var done = document.querySelectorAll('.step.done').length;
+    document.getElementById('doneCount').textContent = done;
+    document.getElementById('progressFill').style.width = (done / steps.length * 100) + '%';
+    document.getElementById('celebrate').classList.toggle('show', done === steps.length);
+  }
+  function saveProgress() {
+    var ids = [];
+    document.querySelectorAll('.step.done').forEach(function (s) { ids.push(s.dataset.id); });
+    try { localStorage.setItem('codoassist_ch0_progress', JSON.stringify(ids)); } catch (e) {}
+  }
+  function loadProgress() {
+    try {
+      var ids = JSON.parse(localStorage.getItem('codoassist_ch0_progress') || '[]');
+      ids.forEach(function (id) {
+        var step = document.querySelector('.step[data-id="' + id + '"]');
+        if (step) {
+          step.classList.add('done');
+          step.querySelector('.complete-btn').textContent = '✓ 完了しました';
+        }
+      });
+    } catch (e) {}
+    updateProgress();
+  }
+  loadProgress();
+</script>
+</body>
+</html>
