@@ -6,16 +6,16 @@
 <title>3章 営業・案件獲得</title>
 <style>
   :root {
-    --paper: #efece5; --card: #f8f6f1; --ink: #262420; --ink-soft: #5c584f;
-    --line: #d9d4c8; --accent: #4a5a8c; --accent-soft: #e3e6f0;
-    --gold: #b8863d; --gold-soft: #f3e8d2; --good: #4c7a52; --good-soft: #e2ecdf;
+    --paper: #fbf1e4; --card: #ffffff; --ink: #4a3728; --ink-soft: #8c7862;
+    --line: #f0dfc8; --accent: #f2793a; --accent-soft: #fde8d8;
+    --gold: #d9683f; --gold-soft: #fbe4d6; --good: #6fa86f; --good-soft: #e6f3e3;
     --code-bg: #232221; --code-ink: #e9e5d8;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --paper: #1d1c19; --card: #26241f; --ink: #eae6dc; --ink-soft: #aca790;
-      --line: #3a372f; --accent: #8a9bd6; --accent-soft: #2a2f45;
-      --gold: #d8ab5f; --gold-soft: #3a301c; --good: #86b58c; --good-soft: #23301f;
+      --paper: #2b2118; --card: #362a1e; --ink: #f5e9d8; --ink-soft: #c9b49a;
+      --line: #4a3a29; --accent: #f5975c; --accent-soft: #4a3521;
+      --gold: #e8935c; --gold-soft: #4a3020; --good: #8ec98f; --good-soft: #2c3a26;
       --code-bg: #100f0e; --code-ink: #e9e5d8;
     }
   }
@@ -31,7 +31,7 @@
   .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
   header.hero { padding: 40px 0 28px; }
   .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-  h1 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 600; margin: 0 0 14px; text-wrap: balance; }
+  h1 { font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif; font-size: clamp(26px, 4vw, 34px); font-weight: 600; margin: 0 0 14px; text-wrap: balance; }
   .hero p { color: var(--ink-soft); font-size: 15px; max-width: 58ch; margin: 0; }
   .step { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
   .step-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px; cursor: pointer; user-select: none; }
@@ -63,14 +63,14 @@
   .step.done .complete-btn { background: var(--good-soft); border-color: var(--good); color: var(--good); }
   .step.done .step-num { background: var(--good-soft); border-color: var(--good); color: var(--good); }
   .faq { margin-top: 40px; }
-  .faq h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 19px; margin: 0 0 14px; }
+  .faq h2 { font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif; font-size: 19px; margin: 0 0 14px; }
   details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
   summary { font-weight: 600; font-size: 14px; cursor: pointer; }
   details p { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-soft); }
   .celebrate { margin-top: 40px; text-align: center; padding: 36px 24px; border-radius: 12px; background: var(--gold-soft); border: 1px solid var(--line); display: none; }
   .celebrate.show { display: block; }
   .celebrate .badge { font-size: 40px; margin-bottom: 10px; }
-  .celebrate h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 18px; margin: 0 0 8px; color: var(--gold); }
+  .celebrate h3 { font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif; font-size: 18px; margin: 0 0 8px; color: var(--gold); }
   .celebrate p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
   .next-btn { display: inline-block; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 999px; background: var(--gold); color: var(--card); text-decoration: none; }
   a.home { color: var(--accent); font-size: 12.5px; text-decoration: none; }
