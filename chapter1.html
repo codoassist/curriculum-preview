@@ -90,6 +90,12 @@
   .celebrate p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
   .next-btn { display: inline-block; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 999px; background: var(--gold); color: var(--card); text-decoration: none; }
   a.home { color: var(--accent); font-size: 12.5px; text-decoration: none; }
+  .substeps { list-style: none; margin: 12px 0 16px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .substeps li { display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; }
+  .substeps input[type=checkbox] { margin-top: 3px; accent-color: var(--good); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .substeps .sub-num { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--ink-soft); flex-shrink: 0; min-width: 40px; }
+  .substeps label { cursor: pointer; }
+  .substeps li.checked label { color: var(--ink-soft); text-decoration: line-through; }
 
   .explainer {
     position: relative; overflow: hidden; background: var(--accent-soft);
@@ -174,8 +180,12 @@
         <span class="step-num">1-1</span><span class="step-title">環境構築</span><span class="step-day">2日目</span><span class="chevron">▸</span>
       </div>
       <div class="step-body">
-        <p>Claude Code（CLI）をパソコンにインストールします。最新のインストール手順は変わることがあるため、必ず公式ドキュメント（claude.com/claude-code）の手順に沿って進めてください。インストール後、ターミナルで <code>claude</code> と入力して起動できれば準備完了です。</p>
-        <p>つまずいたら、1人で悩まず講師・コミュニティに聞いてください。環境構築は技術力でなく「手順通りにやれるか」だけの問題です。</p>
+        <p>Claude Code（CLI）をパソコンにインストールします。つまずいたら、1人で悩まず講師・コミュニティに聞いてください。環境構築は技術力でなく「手順通りにやれるか」だけの問題です。</p>
+        <ul class="substeps">
+          <li><span class="sub-num">1-1-1</span><label><input type="checkbox" onchange="toggleSub(this)"> 公式サイト（claude.com/claude-code）を開く</label></li>
+          <li><span class="sub-num">1-1-2</span><label><input type="checkbox" onchange="toggleSub(this)"> 手順どおりにインストーラーを実行する</label></li>
+          <li><span class="sub-num">1-1-3</span><label><input type="checkbox" onchange="toggleSub(this)"> ターミナルで<code>claude</code>と入力し、起動することを確認する</label></li>
+        </ul>
         <div class="point-box">
           <span class="label">Point</span>
           <ul>
@@ -193,7 +203,12 @@
         <span class="step-num">1-2</span><span class="step-title">業種別スターターの複製</span><span class="step-day">2日目</span><span class="chevron">▸</span>
       </div>
       <div class="step-body">
-        <p>ターミナルでプロジェクト用のフォルダを作り、Claude Codeを起動したら、以下をそのまま貼り付けてください。</p>
+        <ul class="substeps">
+          <li><span class="sub-num">1-2-1</span><label><input type="checkbox" onchange="toggleSub(this)"> ターミナルでプロジェクト用の新しいフォルダを作る</label></li>
+          <li><span class="sub-num">1-2-2</span><label><input type="checkbox" onchange="toggleSub(this)"> そのフォルダの中で <code>claude</code> と入力し起動する</label></li>
+          <li><span class="sub-num">1-2-3</span><label><input type="checkbox" onchange="toggleSub(this)"> 下のプロンプトをコピーして貼り付け、実行する</label></li>
+          <li><span class="sub-num">1-2-4</span><label><input type="checkbox" onchange="toggleSub(this)"> できあがったページをブラウザで開いて確認する</label></li>
+        </ul>
         <div class="prompt-box">
           <span class="prompt-label">Copy &amp; Paste</span>
           <pre>パーソナルジム向けの予約ページのひな形を作ってください。
@@ -331,7 +346,12 @@ GA4に送られるようにしてください。</pre>
         <span class="step-num">1-8</span><span class="step-title">公開・ドメイン接続</span><span class="step-day">7日目</span><span class="chevron">▸</span>
       </div>
       <div class="step-body">
-        <p>Vercel等のホスティングサービスに公開します。手順は公式ドキュメントを確認してください。既存ドメインがある場合は、サブドメイン（例：yoyaku.〇〇gym.com）として接続する方法もあります。</p>
+        <ul class="substeps">
+          <li><span class="sub-num">1-8-1</span><label><input type="checkbox" onchange="toggleSub(this)"> Vercel等のホスティングサービスにアカウント登録する</label></li>
+          <li><span class="sub-num">1-8-2</span><label><input type="checkbox" onchange="toggleSub(this)"> プロジェクトを公開（デプロイ）する</label></li>
+          <li><span class="sub-num">1-8-3</span><label><input type="checkbox" onchange="toggleSub(this)"> 既存ドメインがあればサブドメインとして接続する（例：yoyaku.〇〇gym.com）</label></li>
+          <li><span class="sub-num">1-8-4</span><label><input type="checkbox" onchange="toggleSub(this)"> 実際にスマホでURLを開き、表示・予約ボタンの動作を確認する</label></li>
+        </ul>
         <p><strong>ここまでで、あなたの手元に「動く予約ページ」という資産が1つ残りました。</strong>次の2章で、この作り方を実際の見込み客の診断・提案に使えるようにします。</p>
         <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
       </div>
@@ -358,6 +378,7 @@ GA4に送られるようにしてください。</pre>
     document.querySelectorAll('.step').forEach(function (s) { if (s !== el) s.classList.remove('open'); });
     el.classList.toggle('open');
   }
+  function toggleSub(cb) { cb.closest('li').classList.toggle('checked', cb.checked); }
   function toggleDone(btn) {
     var step = btn.closest('.step');
     step.classList.toggle('done');
