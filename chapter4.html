@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4章 成果の言語化・ナレッジ化</title>
+<style>
+  :root {
+    --paper: #efece5; --card: #f8f6f1; --ink: #262420; --ink-soft: #5c584f;
+    --line: #d9d4c8; --accent: #4a5a8c; --accent-soft: #e3e6f0;
+    --gold: #b8863d; --gold-soft: #f3e8d2; --good: #4c7a52; --good-soft: #e2ecdf;
+    --code-bg: #232221; --code-ink: #e9e5d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1d1c19; --card: #26241f; --ink: #eae6dc; --ink-soft: #aca790;
+      --line: #3a372f; --accent: #8a9bd6; --accent-soft: #2a2f45;
+      --gold: #d8ab5f; --gold-soft: #3a301c; --good: #86b58c; --good-soft: #23301f;
+      --code-bg: #100f0e; --code-ink: #e9e5d8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif; line-height: 1.9; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
+  .progress-bar { position: sticky; top: 0; z-index: 10; background: var(--paper); padding: 16px 24px 14px; border-bottom: 1px solid var(--line); }
+  .progress-bar-inner { max-width: 760px; margin: 0 auto; }
+  .progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .progress-count { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .progress-track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+  header.hero { padding: 40px 0 28px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h1 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 600; margin: 0 0 14px; text-wrap: balance; }
+  .hero p { color: var(--ink-soft); font-size: 15px; max-width: 58ch; margin: 0; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .step-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px; cursor: pointer; user-select: none; }
+  .step-num { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; flex-shrink: 0; }
+  .step-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .step-day { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--ink-soft); flex-shrink: 0; }
+  .chevron { color: var(--ink-soft); transition: transform 0.2s ease; flex-shrink: 0; }
+  .step.open .chevron { transform: rotate(90deg); }
+  .step-body { display: none; padding: 0 22px 24px; font-size: 14.5px; color: var(--ink); }
+  .step.open .step-body { display: block; }
+  .step-body p { margin: 0 0 14px; }
+  .step-body strong { color: var(--ink); }
+  .prompt-box { background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 16px 18px; margin: 14px 0; position: relative; }
+  .prompt-box .prompt-label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #a9a294; display: block; margin-bottom: 8px; }
+  .prompt-box pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.7; padding-right: 70px; }
+  .copy-btn { position: absolute; top: 14px; right: 14px; font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: 1px solid #4a473f; background: #322f2a; color: var(--code-ink); cursor: pointer; }
+  .copy-btn:hover { background: #3d3a33; }
+  .copy-btn.copied { background: var(--good); border-color: var(--good); color: #fff; }
+  .point-box { background: var(--accent-soft); border-radius: 8px; padding: 14px 18px; margin-top: 4px; font-size: 13.5px; }
+  .point-box .label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .point-box ul { margin: 0; padding-left: 18px; }
+  .point-box li { margin-bottom: 4px; }
+  .complete-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .complete-btn { font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .complete-btn:hover { border-color: var(--accent); }
+  .step.done .complete-btn { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .step.done .step-num { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .faq { margin-top: 40px; }
+  .faq h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 19px; margin: 0 0 14px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
+  summary { font-weight: 600; font-size: 14px; cursor: pointer; }
+  details p { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .celebrate { margin-top: 40px; text-align: center; padding: 36px 24px; border-radius: 12px; background: var(--gold-soft); border: 1px solid var(--line); display: none; }
+  .celebrate.show { display: block; }
+  .celebrate .badge { font-size: 40px; margin-bottom: 10px; }
+  .celebrate h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 18px; margin: 0 0 8px; color: var(--gold); }
+  .celebrate p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
+  .next-btn { display: inline-block; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 999px; background: var(--gold); color: var(--card); text-decoration: none; }
+  a.home { color: var(--accent); font-size: 12.5px; text-decoration: none; }
+  @media (max-width: 560px) { .wrap { padding: 0 16px 80px; } .step-head { padding: 16px; } .prompt-box pre { padding-right: 0; } .copy-btn { position: static; margin-top: 10px; } }
+</style>
+</head>
+<body>
+
+<div class="progress-bar">
+  <div class="progress-bar-inner">
+    <div class="progress-top">
+      <span class="progress-label">4章 成果の言語化・ナレッジ化</span>
+      <span class="progress-count"><span id="doneCount">0</span> / 3</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <p style="margin:20px 0 0;"><a class="home" href="index.html">← カリキュラム一覧</a></p>
+  <header class="hero">
+    <div class="eyebrow">CODOASSIST — 4章</div>
+    <h1>成果の言語化・ナレッジ化</h1>
+    <p>やって終わりにしません。実践経験を資産化し、継続契約・次の案件につなげます。</p>
+  </header>
+
+  <div id="steps">
+
+    <div class="step" data-id="4-1">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">4-1</span><span class="step-title">五つの型で経験を資産化する</span><span class="step-day">案件終了ごと</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>対応した案件を1つ選び、次の5項目に整理してください。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">記録テンプレート</span>
+          <pre>①状況：（例：エステサロン、Instagramのフォロワーは多いが予約が少ない）
+②判断基準：（例：プロフィールから予約ページまで4タップかかっていた）
+③指示（Claude Codeへ）：（実際に使ったプロンプト）
+④結果：（例：導線を2タップに短縮、公開後30日でCTAクリック数が2倍）
+⑤再利用テンプレート：（次回同じ課題に使えるチェックリスト）</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <p>この記録の積み重ねが、あなた自身の「語る資格」になります。</p>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="4-2">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">4-2</span><span class="step-title">CVR最適化レポートの作り方</span><span class="step-day">納品30日後・毎月</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>継続契約の価値は、「今のページが本当にベストな予約率（CVR）を出せているか」を毎月数字で伝えることです。1章で仕込んだGA4のデータをもとに、閲覧数・予約ボタンのクリック数・推定成約率をまとめてください。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Copy &amp; Paste（レポート下書き作成）</span>
+          <pre>以下のGA4データをもとに、店舗オーナー向けの
+月次レポートを作成してください。専門用語を避け、
+「先月より良くなった点」「気になる点」「来月の
+改善提案」の3つに分けて、やさしい言葉でまとめて
+ください。
+
+[ここにGA4の数値データを貼り付ける]</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="point-box"><span class="label">Point</span><ul>
+          <li>「運用サポートします」でなく「毎月数字で伝えます」を売りにする</li>
+          <li>専門用語を避け、オーナーが読んで分かる言葉にする</li>
+        </ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="4-3">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">4-3</span><span class="step-title">継続契約への提案</span><span class="step-day">納品直後</span><span class="chevner">▸</span>
+      </div>
+      <div class="step-body">
+        <p>ページの公開で終わらせず、その場で継続契約（¥16,500/月）を提案してください。「作って終わり」でなく「結果を見続ける」ことが、あなたにしかできない価値です。</p>
+        <div class="point-box"><span class="label">Point</span><ul>
+          <li>納品の瞬間が、継続提案の一番のタイミング</li>
+          <li>「作って終わり」との違いをはっきり伝える</li>
+        </ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="faq">
+    <h2>よくある質問</h2>
+    <details><summary>数字が改善していない月はどう報告すればいいですか？</summary><p>正直に伝えてください。「今月は横ばいでした。来月は〇〇を試します」という伝え方が、信頼を長期的に守ります。誤魔化すと、いずれ関係が壊れます。</p></details>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="badge">🏅</div>
+    <h3>全4章、完了です！</h3>
+    <p>お疲れさまでした。ここからは実践あるのみです。1件・2件の結果で一喜一憂せず、行動量を積み重ねてください。</p>
+    <a class="next-btn" href="index.html">カリキュラム一覧へ →</a>
+  </div>
+</div>
+
+<script>
+  function toggleStep(el) { document.querySelectorAll('.step').forEach(function (s) { if (s !== el) s.classList.remove('open'); }); el.classList.toggle('open'); }
+  function toggleDone(btn) { var step = btn.closest('.step'); step.classList.toggle('done'); btn.textContent = step.classList.contains('done') ? '✓ 完了しました' : '✓ 完了にする'; saveProgress(); updateProgress(); }
+  function copyPrompt(btn) { var text = btn.parentElement.querySelector('pre').innerText; navigator.clipboard.writeText(text).then(function () { btn.textContent = 'コピーしました'; btn.classList.add('copied'); setTimeout(function () { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 1800); }); }
+  function updateProgress() { var steps = document.querySelectorAll('.step'); var done = document.querySelectorAll('.step.done').length; document.getElementById('doneCount').textContent = done; document.getElementById('progressFill').style.width = (done / steps.length * 100) + '%'; document.getElementById('celebrate').classList.toggle('show', done === steps.length); }
+  function saveProgress() { var ids = []; document.querySelectorAll('.step.done').forEach(function (s) { ids.push(s.dataset.id); }); try { localStorage.setItem('codoassist_ch4_progress', JSON.stringify(ids)); } catch (e) {} }
+  function loadProgress() { try { var ids = JSON.parse(localStorage.getItem('codoassist_ch4_progress') || '[]'); ids.forEach(function (id) { var step = document.querySelector('.step[data-id="' + id + '"]'); if (step) { step.classList.add('done'); step.querySelector('.complete-btn').textContent = '✓ 完了しました'; } }); } catch (e) {} updateProgress(); }
+  loadProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3章 営業・案件獲得</title>
+<style>
+  :root {
+    --paper: #efece5; --card: #f8f6f1; --ink: #262420; --ink-soft: #5c584f;
+    --line: #d9d4c8; --accent: #4a5a8c; --accent-soft: #e3e6f0;
+    --gold: #b8863d; --gold-soft: #f3e8d2; --good: #4c7a52; --good-soft: #e2ecdf;
+    --code-bg: #232221; --code-ink: #e9e5d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1d1c19; --card: #26241f; --ink: #eae6dc; --ink-soft: #aca790;
+      --line: #3a372f; --accent: #8a9bd6; --accent-soft: #2a2f45;
+      --gold: #d8ab5f; --gold-soft: #3a301c; --good: #86b58c; --good-soft: #23301f;
+      --code-bg: #100f0e; --code-ink: #e9e5d8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", YuGothic, sans-serif; line-height: 1.9; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
+  .progress-bar { position: sticky; top: 0; z-index: 10; background: var(--paper); padding: 16px 24px 14px; border-bottom: 1px solid var(--line); }
+  .progress-bar-inner { max-width: 760px; margin: 0 auto; }
+  .progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .progress-count { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .progress-track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+  header.hero { padding: 40px 0 28px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h1 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 600; margin: 0 0 14px; text-wrap: balance; }
+  .hero p { color: var(--ink-soft); font-size: 15px; max-width: 58ch; margin: 0; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .step-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px; cursor: pointer; user-select: none; }
+  .step-num { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; flex-shrink: 0; }
+  .step-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .step-day { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--ink-soft); flex-shrink: 0; }
+  .chevron { color: var(--ink-soft); transition: transform 0.2s ease; flex-shrink: 0; }
+  .step.open .chevron { transform: rotate(90deg); }
+  .step-body { display: none; padding: 0 22px 24px; font-size: 14.5px; color: var(--ink); }
+  .step.open .step-body { display: block; }
+  .step-body p { margin: 0 0 14px; }
+  .step-body strong { color: var(--ink); }
+  .prompt-box { background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 16px 18px; margin: 14px 0; position: relative; }
+  .prompt-box .prompt-label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #a9a294; display: block; margin-bottom: 8px; }
+  .prompt-box pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.7; padding-right: 70px; }
+  .copy-btn { position: absolute; top: 14px; right: 14px; font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: 1px solid #4a473f; background: #322f2a; color: var(--code-ink); cursor: pointer; }
+  .copy-btn:hover { background: #3d3a33; }
+  .copy-btn.copied { background: var(--good); border-color: var(--good); color: #fff; }
+  .point-box { background: var(--accent-soft); border-radius: 8px; padding: 14px 18px; margin-top: 4px; font-size: 13.5px; }
+  .point-box .label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .point-box ul { margin: 0; padding-left: 18px; }
+  .point-box li { margin-bottom: 4px; }
+  table.crit { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0 16px; }
+  table.crit th, table.crit td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+  table.crit th { color: var(--ink-soft); font-weight: 600; font-size: 11.5px; }
+  .complete-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .complete-btn { font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .complete-btn:hover { border-color: var(--accent); }
+  .step.done .complete-btn { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .step.done .step-num { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .faq { margin-top: 40px; }
+  .faq h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 19px; margin: 0 0 14px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
+  summary { font-weight: 600; font-size: 14px; cursor: pointer; }
+  details p { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .celebrate { margin-top: 40px; text-align: center; padding: 36px 24px; border-radius: 12px; background: var(--gold-soft); border: 1px solid var(--line); display: none; }
+  .celebrate.show { display: block; }
+  .celebrate .badge { font-size: 40px; margin-bottom: 10px; }
+  .celebrate h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif; font-size: 18px; margin: 0 0 8px; color: var(--gold); }
+  .celebrate p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
+  .next-btn { display: inline-block; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 999px; background: var(--gold); color: var(--card); text-decoration: none; }
+  a.home { color: var(--accent); font-size: 12.5px; text-decoration: none; }
+  @media (max-width: 560px) { .wrap { padding: 0 16px 80px; } .step-head { padding: 16px; } .prompt-box pre { padding-right: 0; } .copy-btn { position: static; margin-top: 10px; } }
+</style>
+</head>
+<body>
+
+<div class="progress-bar">
+  <div class="progress-bar-inner">
+    <div class="progress-top">
+      <span class="progress-label">3章 営業・案件獲得</span>
+      <span class="progress-count"><span id="doneCount">0</span> / 9</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <p style="margin:20px 0 0;"><a class="home" href="index.html">← カリキュラム一覧</a></p>
+  <header class="hero">
+    <div class="eyebrow">CODOASSIST — 3章</div>
+    <h1>営業・案件獲得</h1>
+    <p>ここまで来たら、後はひたすら行動するだけです。成果が出る「基準値」をまず知ってください。</p>
+  </header>
+
+  <div id="steps">
+
+    <div class="step" data-id="3-1">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-1</span><span class="step-title">見込み客リストの作り方</span><span class="step-day">11〜13日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>2章の判定シートを使い、対象業種のInstagramアカウントを検索・収集してリスト化します。目標は最低100件です。</p>
+        <div class="point-box"><span class="label">Point</span><ul><li>まず100件、機械的に集める</li></ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-2">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-2</span><span class="step-title">Instagram DM営業の型</span><span class="step-day">13〜15日目</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>1通目では売り込みません。「気になったので見ました」という軽さで、診断への許可をもらうことだけを目的にします。</p>
+        <div class="prompt-box">
+          <span class="prompt-label">1通目テンプレート</span>
+          <pre>突然失礼します。〇〇の投稿を拝見しました。
+内容や雰囲気がとても魅力的なのですが、プロフィールから
+体験予約までの導線に、少し迷いやすい箇所があるかもしれません。
+30秒程度で、気になった点をイメージ付きでまとめたのですが、
+もしよければ見ていただけますでしょうか？</pre>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <p>3日後に反応がなければ1回だけ追客し、7日後にも反応がなければ終了します。しつこく連絡しないでください。</p>
+        <div class="point-box"><span class="label">Point</span><ul>
+          <li>1通目のゴールは「診断を見せる許可」だけ</li>
+          <li>追客は3日後・7日後の2回まで</li>
+        </ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-3">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-3</span><span class="step-title">商談20〜30分の型</span><span class="step-day">15日目〜</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>①現状確認②課題の特定③提案（一番大きい課題を1つだけ示す）④契約条件、の順で進めます。</p>
+        <div class="point-box"><span class="label">Point</span><ul><li>課題は絞って1つ提示する。あれもこれも言わない</li></ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-4">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-4</span><span class="step-title">顕在ニーズでなく潜在ニーズを狙う話し方</span><span class="step-day">15日目〜</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>「オリジナルのHPが欲しい」というお客様の言葉（顕在ニーズ）にそのまま応えて「作ります」と言うと、価格で大手・格安サービスに負けます。「なぜ今予約に繋がっていないか」（潜在ニーズ）を先に示すと、価格競争が起きません。</p>
+        <div class="point-box"><span class="label">Point</span><ul>
+          <li>「作ります」でなく「原因はここです、直します」の順で話す</li>
+          <li>安い・早いでなく「なぜ今予約に繋がらないかが分かる」を売りにする</li>
+        </ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-5">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-5</span><span class="step-title">提案書・見積もり・契約条件</span><span class="step-day">16日目〜</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>着手金50%・納品時50%を標準とし、修正は2回までとします。範囲外の依頼は「追加のご提案」として別見積もりにします（3-9参照）。</p>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-6">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-6</span><span class="step-title">Stripe決済リンクの発行・入金管理</span><span class="step-day">16日目〜</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>契約が決まったら、Stripeの決済リンクを発行してお客様に送ります。単発の「予約ページ制作」（¥99,000）は通常の支払いリンク、継続の「予約導線改善運用」（¥16,500/月）はサブスクリプション（定期支払い）リンクとして発行します。</p>
+        <div class="point-box"><span class="label">Point</span><ul>
+          <li>単発費用は通常の決済リンク</li>
+          <li>継続契約はサブスクリプション（定期支払い）リンク</li>
+          <li>入金確認までがワンセット</li>
+        </ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-7">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-7</span><span class="step-title">実績がなくても売れる考え方</span><span class="step-day">随時</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>「実績がないから売れない」は勘違いです。実績は判断材料でなく、最後の一押しでしかありません。近しい実績（練習で作ったページ、架空案件でも構造は同じ）を見せ、マーケットイン思考（相手の課題から逆算する）で話せば十分です。</p>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-8">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-8</span><span class="step-title">逆算目標設定</span><span class="step-day">随時</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>1件・2件のリードを追いかけるのでなく、月200件のDMという基準値から逆算してください（返信率5〜10%→診断5〜10件→商談2〜5件→成約1〜2件）。</p>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+    <div class="step" data-id="3-9">
+      <div class="step-head" onclick="toggleStep(this.parentElement)">
+        <span class="step-num">3-9</span><span class="step-title">新規制作のアップセル</span><span class="step-day">継続契約後</span><span class="chevron">▸</span>
+      </div>
+      <div class="step-body">
+        <p>継続契約（¥16,500/月・90分以内）は「小さな改善の運用」の範囲です。新しいページ・キャンペーンLP等の「新規制作」はこの範囲外として、都度見積もりします（追加ページ：¥50,000〜¥80,000が目安）。</p>
+        <p>新規の営業をやり直すのでなく、満足している既存の継続顧客への提案として持ちかけてください。</p>
+        <div class="point-box"><span class="label">Point</span><ul>
+          <li>継続契約の範囲は明確に線引きする</li>
+          <li>追加制作は既存顧客へのアップセルとして提案する</li>
+        </ul></div>
+        <div class="complete-row"><button class="complete-btn" onclick="toggleDone(this)">✓ 完了にする</button></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="faq">
+    <h2>よくある質問</h2>
+    <details><summary>DMを送っても全然返信が来ません</summary><p>返信率5〜10%はあくまで目安です。3%を下回る場合は、対象の選定基準やプロフィールの見せ方を見直してください。焦って送信数だけ増やすより、質を見直す方が早いことがあります。</p></details>
+    <details><summary>「安くしてほしい」と言われたらどうすればいいですか？</summary><p>値下げでなく、範囲を調整してください。「ではページ数を減らしましょう」等、価格でなく提供範囲で調整するのが基本です。</p></details>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="badge">🎉</div>
+    <h3>3章、完了です！</h3>
+    <p>営業と案件獲得の型が身につきました。最後は成果を資産化する4章です。</p>
+    <a class="next-btn" href="chapter4.html">4章へ進む →</a>
+  </div>
+</div>
+
+<script>
+  function toggleStep(el) { document.querySelectorAll('.step').forEach(function (s) { if (s !== el) s.classList.remove('open'); }); el.classList.toggle('open'); }
+  function toggleDone(btn) { var step = btn.closest('.step'); step.classList.toggle('done'); btn.textContent = step.classList.contains('done') ? '✓ 完了しました' : '✓ 完了にする'; saveProgress(); updateProgress(); }
+  function copyPrompt(btn) { var text = btn.parentElement.querySelector('pre').innerText; navigator.clipboard.writeText(text).then(function () { btn.textContent = 'コピーしました'; btn.classList.add('copied'); setTimeout(function () { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 1800); }); }
+  function updateProgress() { var steps = document.querySelectorAll('.step'); var done = document.querySelectorAll('.step.done').length; document.getElementById('doneCount').textContent = done; document.getElementById('progressFill').style.width = (done / steps.length * 100) + '%'; document.getElementById('celebrate').classList.toggle('show', done === steps.length); }
+  function saveProgress() { var ids = []; document.querySelectorAll('.step.done').forEach(function (s) { ids.push(s.dataset.id); }); try { localStorage.setItem('codoassist_ch3_progress', JSON.stringify(ids)); } catch (e) {} }
+  function loadProgress() { try { var ids = JSON.parse(localStorage.getItem('codoassist_ch3_progress') || '[]'); ids.forEach(function (id) { var step = document.querySelector('.step[data-id="' + id + '"]'); if (step) { step.classList.add('done'); step.querySelector('.complete-btn').textContent = '✓ 完了しました'; } }); } catch (e) {} updateProgress(); }
+  loadProgress();
+</script>
+</body>
+</html>
